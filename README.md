@@ -53,9 +53,9 @@ code changes.
 
 ## Status
 
-Currently in active development. Multi-tenant foundation and authentication
-(Phase 0/1) are complete and tested end-to-end. See `PROGRESS.md` for
-build log and current phase.
+Currently in active development. Multi-tenant foundation, authentication,
+and permission-based Manage Users (Phases 0–2) are complete and tested
+end-to-end. See `PROGRESS.md` for build log and current phase.
 
 ## Getting started
 

@@ -6,7 +6,8 @@ every collection. Backend in TypeScript (server/), built to scale long-term,
 not treated as throwaway portfolio work.
 
 ## Current Phase
-Phase 0/1 complete — Multi-tenant foundation + Auth/permission middleware
+Phase 2 complete — Manage Users (school-admin creates staff logins with
+granular permissions)
 
 ## Log
 
@@ -31,8 +32,16 @@ Phase 0/1 complete — Multi-tenant foundation + Auth/permission middleware
   confirmed JWT correctly scoped (schoolId set, isSuperAdmin true,
   isPlatformOwner false).
 - Pushed to GitHub, added README.md.
+- Phase 0/1 fully closed out: school-admin login re-verified with correctly
+  scoped JWT before moving on.
+- Added requireSchoolAdmin guard to auth.ts, permissions catalog
+  (constants/permissions.ts), users.controller.ts (createUser, listUsers,
+  updateUserPermissions, deleteUser), users.routes.ts — wired into server.ts.
+- End-to-end verified via Postman: school admin created a reception login
+  with CREATE_PRINTLOG + VIEW_PRINTLOGS permissions, reception logged in
+  with correctly scoped JWT, and reception was correctly blocked (403) from
+  admin-only actions (POST /api/users).
 
 ## Next steps
-- Phase 2: Manage Users — POST /api/users (school-admin-only), so a school
-  admin can create teacher/reception logins and assign specific
-  permissions (e.g. CREATE_PRINTLOG for reception).
+- Phase 3: Classes / Sections / Teachers / Departments CRUD, gated by
+  MANAGE_MASTER_DATA, scoped by existing scopeToSchool middleware.

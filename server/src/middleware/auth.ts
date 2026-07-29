@@ -32,3 +32,11 @@ export const requirePlatformOwner = (req: Request, res: Response, next: NextFunc
   }
   next();
 };
+
+export const requireSchoolAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  if (!req.user?.isSuperAdmin && !req.user?.isPlatformOwner) {
+    res.status(403).json({ message: 'School admin access required' });
+    return;
+  }
+  next();
+};
