@@ -1,71 +1,243 @@
 # A4 Paper Usage Tracker
 
-A multi-tenant SaaS application to track paper (A4) usage across schools —
-built as a real solution for the school I work at, designed so any second
-school could start using it with zero new code.
+A multi-tenant SaaS application for tracking A4 paper usage across schools. Built as a real production-focused solution for the school I work at, but architected so any school can be onboarded without code changes or redeployment.
+
+---
 
 ## Problem
 
-Schools print constantly — worksheets, notices, exams, admin paperwork —
-with no visibility into how much paper is used, by whom, or why. Stock runs
-out with no warning, and there's no record to analyze usage trends or hold
-departments accountable.
+Schools print thousands of pages every month—worksheets, notices, examinations, administrative documents, and reports—but most have no reliable way to answer questions like:
 
-## What this does
+* Which department uses the most paper?
+* Which classes generate the highest printing volume?
+* How much paper was consumed this month?
+* How quickly is paper stock being depleted?
 
-- Logs every print job against a class/section (teaching use) or a
-  department (non-teaching use — Accounts, Front Office, Library)
-- Tracks paper stock as a running ledger (IN vs used)
-- Dashboard with chart-based reports: usage by class, by teacher, monthly
-  trend, and breakdown by purpose
-- CSV export and automated monthly email summaries to the principal
-- Permission-based access control — admins decide exactly what each staff
-  login can see or do
+Without proper tracking, stock shortages occur unexpectedly, usage trends remain invisible, and accountability is difficult.
 
-## Why multi-tenant
+---
 
-Rather than building this for one school, the system is designed so any
-school is a tenant (`School` model, `schoolId` on every collection),
-isolated from every other school's data — enforced centrally through a
-scoping middleware, never left to individual routes to get right. A
-platform owner can onboard a new school in one API call: no new deploy, no
-code changes.
+## Features
 
-## Tech stack
+### Multi-Tenant Architecture
 
-- **Backend:** Node.js, Express, TypeScript, MongoDB (Mongoose)
-- **Frontend:** React (Vite), Recharts for reports
-- **Auth:** JWT + bcrypt, permission-based access control (not fixed roles)
-- **Free-tier infrastructure throughout:** MongoDB Atlas, Render/Railway,
-  Vercel/Netlify
+* One platform supports unlimited schools
+* Every school is isolated through `schoolId` scoping
+* Platform Owner can onboard a new school in a single API call
+* No code changes or separate deployments required for new schools
 
-## Architecture highlights
+### Authentication & Authorization
 
-- Tenant isolation enforced server-side via a single `scopeToSchool`
-  middleware — every controller reads `schoolId` from the verified JWT,
-  never from the request body or URL, so one login can never reach into
-  another school's data
-- Permission system (`permissions: string[]` per user) instead of fixed
-  roles — an admin can grant exactly the capabilities a login needs
-  (e.g. reception gets only `CREATE_PRINTLOG`)
-- Built in TypeScript from the start given the planned scale and feature
-  roadmap — not a retrofit
+* JWT authentication
+* Platform Owner and School Admin accounts
+* Permission-based access control (not fixed roles)
+* Fine-grained permissions for every staff account
 
-## Status
+Example:
 
-Currently in active development. Multi-tenant foundation, authentication,
-and permission-based Manage Users (Phases 0–2) are complete and tested
-end-to-end. See `PROGRESS.md` for build log and current phase.
+* Reception → `CREATE_PRINTLOG`, `VIEW_PRINTLOGS`
+* School Admin → full management permissions
 
-## Getting started
+### User Management
+
+School administrators can:
+
+* Create staff accounts
+* View users
+* Update permissions
+* Delete users
+
+### Master Data Management
+
+School administrators can manage:
+
+* Classes
+* Sections
+* Teachers
+* Departments
+
+Supports both single-record creation and bulk import for initial school setup.
+
+### Print Tracking *(Next Phase)*
+
+Every print job will be logged against either:
+
+* **Teaching**
+
+  * Class
+  * Section
+  * Teacher
+
+OR
+
+* **Non-Teaching**
+
+  * Department
+
+A print log can belong to **either** teaching **or** non-teaching usage, never both.
+
+### Planned Features
+
+* Paper stock ledger (Stock IN / Usage OUT)
+* Dashboard & analytics
+* Monthly usage trends
+* Teacher-wise reports
+* Class-wise reports
+* Department-wise reports
+* CSV export
+* Monthly email summaries
+* Low-stock alerts
+
+---
+
+# Why Multi-Tenant?
+
+Instead of building software for only one school, this project was designed as a SaaS platform from day one.
+
+Every collection contains a `schoolId`, and tenant isolation is enforced centrally through middleware. Controllers never trust a `schoolId` supplied by the client—they always read it from the verified JWT—preventing one school from accessing another school's data.
+
+---
+
+# Tech Stack
+
+### Backend
+
+* Node.js
+* Express.js
+* TypeScript
+* MongoDB Atlas
+* Mongoose
+
+### Authentication
+
+* JWT
+* bcryptjs
+* Permission-based authorization
+
+### Frontend *(Upcoming)*
+
+* React
+* Vite
+* Recharts
+
+### Infrastructure
+
+* MongoDB Atlas
+* Render or Railway
+* Vercel or Netlify
+
+---
+
+# Architecture Highlights
+
+* Multi-tenant SaaS architecture
+* Centralized tenant isolation middleware
+* JWT-based authentication
+* Permission-based authorization
+* TypeScript from the beginning
+* Compound unique indexes for tenant-safe uniqueness
+* Scalable folder structure suitable for production growth
+
+---
+
+# Current Progress
+
+## ✅ Phase 0 – Foundation
+
+* TypeScript backend setup
+* MongoDB Atlas integration
+* JWT authentication
+* Platform Owner seeding
+* School onboarding
+* School Admin authentication
+
+## ✅ Phase 1 – User Management
+
+* Create users
+* List users
+* Update permissions
+* Delete users
+* Permission middleware
+* End-to-end Postman testing
+
+## ✅ Phase 2 – Master Data
+
+Implemented CRUD APIs for:
+
+* Classes
+* Sections
+* Teachers
+* Departments
+
+Successfully populated production-like data for **Asia Pacific School**, including:
+
+* 13 Classes
+* All Sections
+* 47 Academic Teachers
+* 3 Departments
+
+---
+
+## 🚧 Current Phase
+
+**Phase 4 – Print Log Module**
+
+Currently implementing:
+
+* Create Print Log
+* View Print Logs
+* Permission checks
+* Teaching vs Non-Teaching print validation
+
+---
+
+# Project Structure
+
+```text
+server/
+├── config/
+├── constants/
+├── controllers/
+├── middleware/
+├── models/
+├── routes/
+├── scripts/
+├── types/
+├── utils/
+└── server.ts
+```
+
+---
+
+# Getting Started
 
 ```bash
+git clone <repository-url>
+
 cd server
+
 npm install
-# fill in .env — see .env.example
+
+# Configure .env using .env.example
+
 npm run dev
 ```
 
-## License
+---
 
-MIT (or your preferred license)
+# Current Status
+
+The backend foundation is complete and fully functional.
+
+Implemented features include:
+
+* Multi-tenant architecture
+* Authentication
+* Authorization
+* School onboarding
+* User management
+* Master data management
+
+The project is currently moving into the core paper-tracking module, which will power reporting, stock management, and analytics.
+
+
