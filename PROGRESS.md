@@ -6,8 +6,8 @@ every collection. Backend in TypeScript (server/), built to scale long-term,
 not treated as throwaway portfolio work.
 
 ## Current Phase
-Phase 3 complete — Classes / Sections / Teachers / Departments CRUD,
-real school data populated
+Phase 4 complete — PrintLog Create + List (class/section or department
+logging, fully tested)
 
 ## Log
 
@@ -53,8 +53,17 @@ real school data populated
   (name + veidaId from Veda Ingrails), and 3 departments (Accounts,
   Reception, Library). Section-to-teacher assignment deferred to the
   frontend UI phase rather than done via raw API calls.
+- Built PrintLog model + controller + routes, gated by CREATE_PRINTLOG /
+  VIEW_PRINTLOGS. Enforced the "class/section OR department, never both,
+  never neither" rule at the controller level. listPrintLogs supports
+  filtering by classId/departmentId/teacherId and date range, and
+  populates related documents.
+- End-to-end verified via Postman: teaching print log created (with real
+  teacherId/classId/sectionId), department print log created, both-fields
+  rejected with 400, neither-field rejected with 400, list returns fully
+  populated logs sorted newest-first, and classId filter correctly
+  narrows results.
 
 ## Next steps
-- Phase 4: PrintLog Create + List, gated by CREATE_PRINTLOG /
-  VIEW_PRINTLOGS. A print job logs against either a class+section
-  (teaching print) or a department (non-teaching print), never both.
+- Phase 5: Stock Ledger, gated by MANAGE_STOCK. current stock =
+  sum(IN) − sum(sheetsUsed across that school's PrintLogs).

@@ -58,9 +58,9 @@ School administrators can manage:
 
 Supports both single-record creation and bulk import for initial school setup.
 
-### Print Tracking *(Next Phase)*
+### Print Tracking
 
-Every print job will be logged against either:
+Every print job is logged against either:
 
 * **Teaching**
 
@@ -74,11 +74,13 @@ OR
 
   * Department
 
-A print log can belong to **either** teaching **or** non-teaching usage, never both.
+A print log belongs to **either** teaching **or** non-teaching usage, never both, and never neither—enforced at the API level.
+
+Supports filtering by class, department, teacher, and date range.
 
 ### Planned Features
 
-* Paper stock ledger (Stock IN / Usage OUT)
+* Paper stock ledger (Stock IN / Usage OUT) *(Next Phase)*
 * Dashboard & analytics
 * Monthly usage trends
 * Teacher-wise reports
@@ -142,7 +144,7 @@ Every collection contains a `schoolId`, and tenant isolation is enforced central
 
 # Current Progress
 
-## ✅ Phase 0 – Foundation
+## ✅ Phase 1 – Foundation
 
 * TypeScript backend setup
 * MongoDB Atlas integration
@@ -151,7 +153,7 @@ Every collection contains a `schoolId`, and tenant isolation is enforced central
 * School onboarding
 * School Admin authentication
 
-## ✅ Phase 1 – User Management
+## ✅ Phase 2 – User Management
 
 * Create users
 * List users
@@ -160,7 +162,7 @@ Every collection contains a `schoolId`, and tenant isolation is enforced central
 * Permission middleware
 * End-to-end Postman testing
 
-## ✅ Phase 2 – Master Data
+## ✅ Phase 3 – Master Data
 
 Implemented CRUD APIs for:
 
@@ -176,20 +178,22 @@ Successfully populated production-like data for **Asia Pacific School**, includi
 * 47 Academic Teachers
 * 3 Departments
 
+## ✅ Phase 4 – Print Log Module
+
+Implemented:
+
+* Create Print Log
+* View Print Logs (with filtering by class, department, teacher, and date range)
+* Permission checks (`CREATE_PRINTLOG`, `VIEW_PRINTLOGS`)
+* Teaching vs Non-Teaching validation—rejects logs with both or neither
+
+End-to-end verified via Postman: teaching prints, department prints, both-fields and neither-field rejection, filtered listing.
+
 ---
 
 ## 🚧 Current Phase
 
-**Phase 4 – Print Log Module**
-
-Currently implementing:
-
-* Create Print Log
-* View Print Logs
-* Permission checks
-* Teaching vs Non-Teaching print validation
-
----
+**Phase 5 – Stock Ledger**
 
 # Project Structure
 
@@ -237,7 +241,6 @@ Implemented features include:
 * School onboarding
 * User management
 * Master data management
+* Print log tracking
 
-The project is currently moving into the core paper-tracking module, which will power reporting, stock management, and analytics.
-
-
+The project is now moving into stock ledger tracking, which will power low-stock alerts and feed directly into the upcoming reporting and analytics dashboard.
