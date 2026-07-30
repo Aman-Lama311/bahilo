@@ -6,8 +6,8 @@ every collection. Backend in TypeScript (server/), built to scale long-term,
 not treated as throwaway portfolio work.
 
 ## Current Phase
-Phase 2 complete — Manage Users (school-admin creates staff logins with
-granular permissions)
+Phase 3 complete — Classes / Sections / Teachers / Departments CRUD,
+real school data populated
 
 ## Log
 
@@ -41,7 +41,20 @@ granular permissions)
   with CREATE_PRINTLOG + VIEW_PRINTLOGS permissions, reception logged in
   with correctly scoped JWT, and reception was correctly blocked (403) from
   admin-only actions (POST /api/users).
+- Built Class, Section, Teacher, Department models + controllers (single
+  and bulk-create) + routes, gated by MANAGE_MASTER_DATA, wired into
+  server.ts.
+- Hit a DNS resolution issue after switching Ethernet networks (Node's
+  resolver couldn't reach the network-assigned DNS server for MongoDB's
+  SRV lookup) — fixed by forcing dns.setServers(['8.8.8.8', '1.1.1.1'])
+  in config/db.ts.
+- Populated real school data (Asia Pacific School) via bulk-create: 13
+  classes (Nursery–Class 10), all their sections, 47 Academic teachers
+  (name + veidaId from Veda Ingrails), and 3 departments (Accounts,
+  Reception, Library). Section-to-teacher assignment deferred to the
+  frontend UI phase rather than done via raw API calls.
 
 ## Next steps
-- Phase 3: Classes / Sections / Teachers / Departments CRUD, gated by
-  MANAGE_MASTER_DATA, scoped by existing scopeToSchool middleware.
+- Phase 4: PrintLog Create + List, gated by CREATE_PRINTLOG /
+  VIEW_PRINTLOGS. A print job logs against either a class+section
+  (teaching print) or a department (non-teaching print), never both.
