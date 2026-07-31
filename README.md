@@ -78,10 +78,17 @@ A print log belongs to **either** teaching **or** non-teaching usage, never both
 
 Supports filtering by class, department, teacher, and date range.
 
+### Stock Ledger
+
+* Add stock entries (reams, sheets per ream, date, notes)
+* Current stock computed automatically: sum of sheets added minus sum
+  of sheets used across all print logs
+* Computed via MongoDB aggregation, so it stays fast as print log
+  volume grows
+
 ### Planned Features
 
-* Paper stock ledger (Stock IN / Usage OUT) *(Next Phase)*
-* Dashboard & analytics
+* Dashboard & analytics *(Next Phase)*
 * Monthly usage trends
 * Teacher-wise reports
 * Class-wise reports
@@ -189,11 +196,30 @@ Implemented:
 
 End-to-end verified via Postman: teaching prints, department prints, both-fields and neither-field rejection, filtered listing.
 
+## ✅ Phase 5 – Stock Ledger
+
+Implemented:
+
+* Add stock entries
+* Current stock calculation (sheets in − sheets used) via MongoDB
+  aggregation
+* List stock entries
+
+End-to-end verified via Postman: added stock, confirmed running total
+reflected prior print-log usage, added a second entry, confirmed the
+total updated correctly.
+
 ---
 
 ## 🚧 Current Phase
 
-**Phase 5 – Stock Ledger**
+**Phase 6 – Reports Dashboard**
+
+Chart-based reporting: usage by class, by teacher, monthly trend, and
+breakdown by purpose. Backend aggregation endpoints first, Recharts
+frontend after.
+
+---
 
 # Project Structure
 
@@ -242,5 +268,7 @@ Implemented features include:
 * User management
 * Master data management
 * Print log tracking
+* Stock ledger
 
-The project is now moving into stock ledger tracking, which will power low-stock alerts and feed directly into the upcoming reporting and analytics dashboard.
+The project is now moving into the reports dashboard, which will surface
+usage trends and feed CSV export and monthly email summaries in later phases.

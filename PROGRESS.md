@@ -6,8 +6,8 @@ every collection. Backend in TypeScript (server/), built to scale long-term,
 not treated as throwaway portfolio work.
 
 ## Current Phase
-Phase 4 complete — PrintLog Create + List (class/section or department
-logging, fully tested)
+Phase 5 complete — Stock Ledger (add stock, current stock calculation,
+list entries)
 
 ## Log
 
@@ -63,7 +63,25 @@ logging, fully tested)
   rejected with 400, neither-field rejected with 400, list returns fully
   populated logs sorted newest-first, and classId filter correctly
   narrows results.
+- Built PaperStock model + controller (addStock, getCurrentStock,
+  listStockEntries) + routes, gated by MANAGE_STOCK. current stock =
+  sum(reams * sheetsPerReam) − sum(sheetsUsed across that school's
+  PrintLogs), computed via MongoDB aggregation.
+- Hit and fixed a real bug: aggregate()'s $match stage doesn't
+  auto-cast a string schoolId to ObjectId (unlike .find()), so the
+  first test returned all zeros — fixed by explicitly wrapping
+  req.schoolId in new mongoose.Types.ObjectId(...) before matching.
+- Also wrote and then deleted a one-off resetAdminPassword.ts script
+  (used to recover a forgotten school-admin password during testing —
+  not something to keep in the codebase long-term).
+- End-to-end verified via Postman: added stock (20 reams), confirmed
+  current stock reflected sheetsIn minus prior print-log usage, added a
+  second stock entry, confirmed the running total updated correctly.
 
 ## Next steps
-- Phase 5: Stock Ledger, gated by MANAGE_STOCK. current stock =
-  sum(IN) − sum(sheetsUsed across that school's PrintLogs).
+- Phase 6: Reports Dashboard — chart-based (Recharts): bar (by-class,
+  by-teacher), line (monthly trend), donut (by-purpose breakdown).
+  Backend aggregation endpoints first, frontend charts after.
+- Noted for later (not yet planned into a phase): self-service change-
+  password endpoint, and a "forgot password" flow once Phase 8's email
+  infrastructure (nodemailer) exists to support it.
