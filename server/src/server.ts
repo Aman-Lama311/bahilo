@@ -10,6 +10,7 @@ import teachersRoutes from './routes/teachers.routes';
 import departmentsRoutes from './routes/departments.routes';
 import printlogsRoutes from './routes/printlogs.routes';
 import stockRoutes from './routes/stock.routes';
+import reportsRoutes from './routes/reports.routes';
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use('/api/teachers', teachersRoutes);
 app.use('/api/departments', departmentsRoutes);
 app.use('/api/printlogs', printlogsRoutes);
 app.use('/api/stock', stockRoutes);
+app.use('/api/reports', reportsRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
