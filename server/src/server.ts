@@ -12,6 +12,8 @@ import printlogsRoutes from './routes/printlogs.routes';
 import stockRoutes from './routes/stock.routes';
 import reportsRoutes from './routes/reports.routes';
 import exportRoutes from './routes/export.routes';
+import emailRoutes from './routes/email.routes';
+import { scheduleMonthlyReportJob } from './jobs/monthlyReport.job';
 
 const app = express();
 app.use(express.json());
@@ -29,6 +31,8 @@ app.use('/api/printlogs', printlogsRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/export', exportRoutes);
+app.use('/api/email', emailRoutes);
+scheduleMonthlyReportJob();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

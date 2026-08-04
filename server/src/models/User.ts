@@ -8,6 +8,8 @@ export interface IUser extends Document {
   isSuperAdmin: boolean;
   isPlatformOwner: boolean;
   permissions: string[];
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,7 +28,9 @@ const userSchema = new Schema<IUser>(
     passwordHash: { type: String, required: true },
     isSuperAdmin: { type: Boolean, default: false },
     isPlatformOwner: { type: Boolean, default: false },
-    permissions: [{ type: String }]
+    permissions: [{ type: String }],
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date }
   },
   { timestamps: true }
 );
