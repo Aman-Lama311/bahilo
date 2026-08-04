@@ -16,6 +16,8 @@ by whom, or why — stock runs out unexpectedly and usage trends stay invisible.
   school in one API call
 - **Auth & permissions** — JWT-based, permission-driven (not fixed roles):
   e.g. Reception gets `CREATE_PRINTLOG` + `VIEW_PRINTLOGS` only
+- **Password recovery** — self-service change-password, plus OTP-based
+  forgot-password/reset-password (6-digit email code, 10-minute expiry)
 - **User management** — school admins create staff, assign granular
   permissions, update/delete accounts
 - **Master data** — Classes, Sections, Teachers, Departments; single or
@@ -25,11 +27,12 @@ by whom, or why — stock runs out unexpectedly and usage trends stay invisible.
 - **Stock ledger** — current stock computed automatically via aggregation:
   sheets in − sheets used
 - **Reports** — by-class, by-teacher, monthly trend, by-purpose breakdown
-  *(backend done)*
+- **CSV export** — print logs and stock entries
+- **Monthly auto-email** — each school's usage summary sent automatically
+  to its own principal, via a scheduled job
 
 ### Planned
-CSV export *(next)* · monthly email summaries · low-stock alerts ·
-React + Recharts frontend
+Low-stock alerts · React + Recharts frontend
 
 ## Why Multi-Tenant
 
@@ -41,6 +44,7 @@ never reach another's data.
 
 **Backend:** Node.js, Express, TypeScript, MongoDB Atlas, Mongoose
 **Auth:** JWT, bcryptjs, permission-based authorization
+**Email:** nodemailer, node-cron
 **Frontend (upcoming):** React, Vite, Recharts
 **Infra:** MongoDB Atlas, Render/Railway, Vercel/Netlify
 
@@ -53,10 +57,11 @@ never reach another's data.
 | 3 — Master Data (real school data populated) | ✅ |
 | 4 — Print Log | ✅ |
 | 5 — Stock Ledger | ✅ |
-| 6 — Reports (backend) | ✅ |
-| 7 — CSV Export | 🚧 next |
-| 8 — Monthly Email | ⏳ |
-| Frontend (React + Recharts) | ⏳ after backend is fully done |
+| 6 — Reports | ✅ |
+| 7 — CSV Export | ✅ |
+| 8 — Monthly Email | ✅ |
+| Password reset (change + OTP forgot-password) | ✅ |
+| Frontend (React + Recharts) | 🚧 next |
 
 See `PROGRESS.md` for the detailed build log.
 
@@ -67,11 +72,14 @@ server/
 ├── config/
 ├── constants/
 ├── controllers/
+├── jobs/
 ├── middleware/
 ├── models/
 ├── routes/
 ├── scripts/
+├── services/
 ├── types/
+├── utils/
 └── server.ts
 ```
 
@@ -87,6 +95,6 @@ npm run dev
 
 ## Status
 
-Backend is functionally complete through Reports (data endpoints). Next
-up: CSV export and monthly email, to finish the backend fully before
-starting the React frontend.
+Backend is fully complete: auth, multi-tenancy, permissions, master data,
+print tracking, stock ledger, reports, CSV export, monthly email, and
+password recovery. Next: the React frontend.

@@ -5,9 +5,8 @@ Multi-tenant SaaS (v4 LLD). School = top-level tenant, schoolId scoped on
 every collection. Backend in TypeScript (server/), built to scale long-term.
 
 ## Current Phase
-Phase 6 complete — Reports backend (chart data endpoints). Moving to
-Phase 7 (CSV Export) next, then Phase 8 (Monthly Email), before starting
-the frontend.
+Backend fully complete — Phases 1-8, plus self-service change-password
+and OTP-based forgot-password/reset-password. Next: React frontend.
 
 ## Log
 
@@ -48,11 +47,28 @@ the frontend.
   to join Class/Teacher names into results. Verified against real
   print-log data.
 
+- **Phase 7 — CSV Export:** hand-written CSV builder (no dependency),
+  export endpoints for print logs and stock entries, gated by EXPORT_CSV.
+  Verified both downloads via Thunder Client — correctly formatted with
+  populated names and fallback empty fields.
+
+- **Phase 8 — Monthly Auto-Email:** nodemailer + node-cron job (runs 1st
+  of each month), loops over active schools, sends each its own summary
+  to its own principalEmail. Manual /resend endpoint for on-demand
+  testing, gated by MANAGE_EMAIL_SETTINGS. Verified SMTP send end-to-end
+  (Gmail App Password). Along the way, hit and resolved a Node.js
+  installation corruption (a corrupted npm-bundled file broke every npm
+  command) via full Node reinstall.
+
+- **Password reset (add-on, not in original phase list):** self-service
+  change-password (logged-in, verifies current password first), plus
+  OTP-based forgot-password/reset-password — 6-digit code emailed,
+  10-minute expiry, single-use. Verified working for both school admin
+  and a non-admin staff account (reception), confirming it's
+  permission-agnostic.
+
 ## Next steps
-- Phase 7: CSV Export — reuse the Phase 6 report queries, format as CSV.
-- Phase 8: Monthly Email — nodemailer + node-cron, loop over active
-  schools, send each their own summary to principalEmail.
-- Only after 7 and 8: start the React frontend (Vite), including the
-  Recharts dashboard for Phase 6's data.
-- Noted for later: self-service change-password + "forgot password" flow
-  (once Phase 8's email infra exists).
+- Start the React frontend (Vite): login, dashboard, Manage Users,
+  master data screens, PrintLog form, Recharts reports dashboard.
+- Section-to-teacher assignment UI (deferred from Phase 3).
+- Consider Swagger/OpenAPI docs now that the API surface is stable.
