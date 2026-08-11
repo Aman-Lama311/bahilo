@@ -14,6 +14,7 @@ import reportsRoutes from './routes/reports.routes';
 import exportRoutes from './routes/export.routes';
 import emailRoutes from './routes/email.routes';
 import { scheduleMonthlyReportJob } from './jobs/monthlyReport.job';
+import studentsRoutes from './routes/students.routes';
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use('/api/stock', stockRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/students', studentsRoutes);
 scheduleMonthlyReportJob();
 
 const PORT = process.env.PORT || 6000;
