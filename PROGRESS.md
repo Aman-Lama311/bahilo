@@ -5,8 +5,9 @@ Multi-tenant SaaS (v4 LLD). School = top-level tenant, schoolId scoped on
 every collection. Backend in TypeScript (server/), built to scale long-term.
 
 ## Current Phase
-Backend fully complete — Phases 1-8, plus self-service change-password
-and OTP-based forgot-password/reset-password. Next: React frontend.
+Backend core (Phases 1-8) complete. Extending with a new Notebook/Copy
+Register module (Student done — N1; NotebookType and NotebookIssue next).
+Frontend UI/UX design to come before any frontend code.
 
 ## Log
 
@@ -26,10 +27,10 @@ and OTP-based forgot-password/reset-password. Next: React frontend.
   admin actions.
 
 - **Phase 3 — Master Data:** Class/Section/Teacher/Department models +
-  CRUD + bulk-create, gated by MANAGE_MASTER_DATA. Populated real data for
-  Asia Pacific School: 13 classes, all sections, 47 Academic teachers
-  (from Veda Ingrails), 3 departments. Section-teacher assignment deferred
-  to frontend UI phase.
+  full CRUD + bulk-create + bulk-update, gated by MANAGE_MASTER_DATA.
+  Populated real data for Asia Pacific School: 13 classes, all sections,
+  47 Academic teachers (from Veda Ingrails), 3 departments.
+  Section-teacher assignment deferred to frontend UI phase.
 
 - **Phase 4 — PrintLog:** create + list, gated by CREATE_PRINTLOG /
   VIEW_PRINTLOGS. Enforces "class/section OR department, never both,
@@ -67,8 +68,37 @@ and OTP-based forgot-password/reset-password. Next: React frontend.
   and a non-admin staff account (reception), confirming it's
   permission-agnostic.
 
+- **Bulk-update, all master data + Student:** PUT /bulk added to Classes,
+  Sections, Teachers, Departments, and Students — mirrors the existing
+  bulk-create pattern (array in, array of updated docs out). Route
+  ordering matters here: /bulk must be registered before /:id, or
+  Express matches "bulk" as if it were an :id param and fails casting to
+  ObjectId — hit and fixed this on Students first, then applied the
+  correct order to all four master-data resources up front.
+
+- **Notebook/Copy Register module (new, same backend) — N1: Student:**
+  digitizes the handwritten register tracking which student took which
+  notebook type, how many, and why. Student model (schoolId, name,
+  classId, sectionId, optional veidaId) with a hard unique index on
+  schoolId+classId+sectionId+name — two same-named students are fine
+  across different sections, blocked within the same one. Full CRUD +
+  bulk-create + bulk-update built and tested, including the duplicate-key
+  behavior on create/update. Bulk-imported a real 27-student class list
+  (Class 1, Cherry section). Next: N2 (NotebookType catalog), N3
+  (NotebookIssue log + running totals per student).
+
 ## Next steps
-- Start the React frontend (Vite): login, dashboard, Manage Users,
-  master data screens, PrintLog form, Recharts reports dashboard.
+- N2: NotebookType catalog (dynamic, admin-managed — e.g. A4 Long, A4
+  Brown Copy, Small Nepali/Samajik).
+- N3: NotebookIssue log (student + type + quantity + free-text reason),
+  plus a running-total-per-student-per-type endpoint (same aggregation
+  pattern as the stock ledger).
+- UI/UX design pass (mockups) before any frontend code — Login, Print
+  Log, Dashboard, Master Data, and a "School Setup" bulk-onboarding
+  screen (sequences class→section→teacher/student→department bulk calls
+  behind one form).
 - Section-to-teacher assignment UI (deferred from Phase 3).
-- Consider Swagger/OpenAPI docs now that the API surface is stable.
+- Possible project rename — domain bahilo.com secured (from Nepali
+  "bahi" = register/notebook), decision pending.
+- Consider Swagger/OpenAPI docs once the API surface (including the new
+  module) is stable.

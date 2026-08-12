@@ -8,6 +8,8 @@ school can be onboarded with zero code changes or redeployment.
 
 Schools print constantly with no visibility into how much paper is used,
 by whom, or why — stock runs out unexpectedly and usage trends stay invisible.
+Alongside this, notebook/copy distribution to students is still tracked
+by hand in a paper register, class by class.
 
 ## Features
 
@@ -20,8 +22,8 @@ by whom, or why — stock runs out unexpectedly and usage trends stay invisible.
   forgot-password/reset-password (6-digit email code, 10-minute expiry)
 - **User management** — school admins create staff, assign granular
   permissions, update/delete accounts
-- **Master data** — Classes, Sections, Teachers, Departments; single or
-  bulk creation
+- **Master data** — Classes, Sections, Teachers, Departments; single,
+  bulk-create, and bulk-update for all four
 - **Print tracking** — every job logged as teaching (class/section/teacher)
   or non-teaching (department), never both, never neither
 - **Stock ledger** — current stock computed automatically via aggregation:
@@ -30,9 +32,17 @@ by whom, or why — stock runs out unexpectedly and usage trends stay invisible.
 - **CSV export** — print logs and stock entries
 - **Monthly auto-email** — each school's usage summary sent automatically
   to its own principal, via a scheduled job
+- **Student records** — lightweight per-school student list (name, class,
+  section, optional external ID), foundation for the notebook register
+  module *(in progress)*
+
+### In progress
+Notebook/Copy Register module — NotebookType catalog + NotebookIssue log
+with per-student running totals, digitizing the handwritten distribution
+register
 
 ### Planned
-Low-stock alerts · React + Recharts frontend
+Low-stock alerts · React + Recharts frontend · UI/UX mockups first
 
 ## Why Multi-Tenant
 
@@ -50,18 +60,22 @@ never reach another's data.
 
 ## Progress
 
-| Phase | Status |
+| Area | Status |
 |---|---|
 | 1 — Foundation (auth, multi-tenancy) | ✅ |
 | 2 — User Management | ✅ |
-| 3 — Master Data (real school data populated) | ✅ |
+| 3 — Master Data (real school data, bulk create + update) | ✅ |
 | 4 — Print Log | ✅ |
 | 5 — Stock Ledger | ✅ |
 | 6 — Reports | ✅ |
 | 7 — CSV Export | ✅ |
 | 8 — Monthly Email | ✅ |
 | Password reset (change + OTP forgot-password) | ✅ |
-| Frontend (React + Recharts) | 🚧 next |
+| Notebook module — Student (N1) | ✅ |
+| Notebook module — NotebookType (N2) | ⏳ next |
+| Notebook module — NotebookIssue (N3) | ⏳ |
+| UI/UX mockups | 🚧 in progress |
+| Frontend (React + Recharts) | ⏳ after UI/UX |
 
 See `PROGRESS.md` for the detailed build log.
 
@@ -95,6 +109,9 @@ npm run dev
 
 ## Status
 
-Backend is fully complete: auth, multi-tenancy, permissions, master data,
-print tracking, stock ledger, reports, CSV export, monthly email, and
-password recovery. Next: the React frontend.
+Core backend (Phases 1-8) is complete: auth, multi-tenancy, permissions,
+master data, print tracking, stock ledger, reports, CSV export, monthly
+email, and password recovery — all bulk-create and bulk-update capable.
+Now extending into a Notebook/Copy Register module for student-level
+notebook tracking, and planning the frontend UI/UX before writing any
+client code.
