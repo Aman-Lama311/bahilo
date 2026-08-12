@@ -29,6 +29,26 @@ export const bulkCreateStudents = async (req: Request, res: Response): Promise<v
   }
 };
 
+export const bulkUpdateStudents = async (req: Request, res: Response): Promise<void> => {
+  const { updates } = req.body as { updates: { id: string; name?: string; classId?: string; sectionId?: string }[] };
+
+  try {
+    const results = await Promise.all(
+      updates.map(({ id, ...fields }) =>
+        Student.findOneAndUpdate({ _id: id, schoolId: req.schoolId }, fields, { new: true })
+      )
+    );
+    res.json(results);
+  } catch (err) {
+    const mongoErr = err as { code?: number };
+    if (mongoErr.code === 11000) {
+      res.status(409).json({ message: 'One or more updates would create a duplicate name in a class/section' });
+      return;
+    }
+    res.status(400).json({ message: (err as Error).message });
+  }
+};
+
 export const listStudents = async (req: Request, res: Response): Promise<void> => {
   const filter: Record<string, unknown> = { schoolId: req.schoolId };
   if (req.query.classId) filter.classId = req.query.classId;

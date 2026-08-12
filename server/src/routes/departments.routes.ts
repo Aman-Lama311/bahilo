@@ -8,6 +8,7 @@ import {
   bulkCreateDepartments,
   listDepartments,
   updateDepartment,
+  bulkUpdateDepartments,
   deleteDepartment
 } from '../controllers/departments.controller';
 
@@ -18,6 +19,7 @@ router.use(verifyToken, scopeToSchool);
 router.post('/', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), createDepartment);
 router.post('/bulk', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), bulkCreateDepartments);
 router.get('/', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), listDepartments);
+router.put('/bulk', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), bulkUpdateDepartments);
 router.put('/:id', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), updateDepartment);
 router.delete('/:id', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), deleteDepartment);
 

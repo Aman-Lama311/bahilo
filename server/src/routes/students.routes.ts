@@ -8,6 +8,7 @@ import {
   bulkCreateStudents,
   listStudents,
   updateStudent,
+  bulkUpdateStudents,
   deleteStudent
 } from '../controllers/students.controller';
 
@@ -18,6 +19,7 @@ router.use(verifyToken, scopeToSchool);
 router.post('/', requirePermission(PERMISSIONS.MANAGE_STUDENTS), createStudent);
 router.post('/bulk', requirePermission(PERMISSIONS.MANAGE_STUDENTS), bulkCreateStudents);
 router.get('/', requirePermission(PERMISSIONS.MANAGE_STUDENTS), listStudents);
+router.put('/bulk', requirePermission(PERMISSIONS.MANAGE_STUDENTS), bulkUpdateStudents);
 router.put('/:id', requirePermission(PERMISSIONS.MANAGE_STUDENTS), updateStudent);
 router.delete('/:id', requirePermission(PERMISSIONS.MANAGE_STUDENTS), deleteStudent);
 

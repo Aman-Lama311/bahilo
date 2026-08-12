@@ -8,6 +8,7 @@ import {
   bulkCreateClasses,
   listClasses,
   updateClass,
+  bulkUpdateClasses,
   deleteClass
 } from '../controllers/classes.controller';
 
@@ -18,6 +19,7 @@ router.use(verifyToken, scopeToSchool);
 router.post('/', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), createClass);
 router.post('/bulk', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), bulkCreateClasses);
 router.get('/', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), listClasses);
+router.put('/bulk', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), bulkUpdateClasses);
 router.put('/:id', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), updateClass);
 router.delete('/:id', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), deleteClass);
 

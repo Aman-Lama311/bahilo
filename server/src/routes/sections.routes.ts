@@ -8,6 +8,7 @@ import {
   bulkCreateSections,
   listSections,
   updateSection,
+  bulkUpdateSections,
   deleteSection
 } from '../controllers/sections.controller';
 
@@ -18,6 +19,7 @@ router.use(verifyToken, scopeToSchool);
 router.post('/', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), createSection);
 router.post('/bulk', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), bulkCreateSections);
 router.get('/', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), listSections);
+router.put('/bulk', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), bulkUpdateSections);
 router.put('/:id', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), updateSection);
 router.delete('/:id', requirePermission(PERMISSIONS.MANAGE_MASTER_DATA), deleteSection);
 

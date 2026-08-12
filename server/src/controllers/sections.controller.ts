@@ -22,6 +22,25 @@ export const bulkCreateSections = async (req: Request, res: Response): Promise<v
   }
 };
 
+export const bulkUpdateSections = async (req: Request, res: Response): Promise<void> => {
+  const { updates } = req.body as { updates: { id: string; name?: string; classId?: string }[] };
+  try {
+    const results = await Promise.all(
+      updates.map(({ id, ...fields }) =>
+        Section.findOneAndUpdate({ _id: id, schoolId: req.schoolId }, fields, { new: true })
+      )
+    );
+    res.json(results);
+  } catch (err) {
+    const mongoErr = err as { code?: number };
+    if (mongoErr.code === 11000) {
+      res.status(409).json({ message: 'One or more updates would create a duplicate section name in that class' });
+      return;
+    }
+    res.status(400).json({ message: (err as Error).message });
+  }
+};
+
 export const listSections = async (req: Request, res: Response): Promise<void> => {
   const filter: Record<string, unknown> = { schoolId: req.schoolId };
   if (req.query.classId) {

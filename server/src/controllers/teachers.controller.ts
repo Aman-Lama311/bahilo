@@ -37,6 +37,22 @@ export const bulkCreateTeachers = async (req: Request, res: Response): Promise<v
   }
 };
 
+export const bulkUpdateTeachers = async (req: Request, res: Response): Promise<void> => {
+  const { updates } = req.body as {
+    updates: { id: string; name?: string; assignedSections?: string[]; veidaId?: string }[];
+  };
+  try {
+    const results = await Promise.all(
+      updates.map(({ id, ...fields }) =>
+        Teacher.findOneAndUpdate({ _id: id, schoolId: req.schoolId }, fields, { new: true })
+      )
+    );
+    res.json(results);
+  } catch (err) {
+    res.status(400).json({ message: (err as Error).message });
+  }
+};
+
 export const listTeachers = async (req: Request, res: Response): Promise<void> => {
   const teachers = await Teacher.find({ schoolId: req.schoolId }).populate('assignedSections');
   res.json(teachers);
