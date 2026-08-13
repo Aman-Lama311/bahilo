@@ -16,6 +16,8 @@ import emailRoutes from './routes/email.routes';
 import { scheduleMonthlyReportJob } from './jobs/monthlyReport.job';
 import studentsRoutes from './routes/students.routes';
 import notebookTypesRoutes from './routes/notebookTypes.routes';
+import notebookIssuesRoutes from './routes/notebookIssues.routes';
+import notebookReasonsRoutes from './routes/notebookReasons.routes';
 
 const app = express();
 app.use(express.json());
@@ -36,6 +38,8 @@ app.use('/api/export', exportRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/students', studentsRoutes);
 app.use('/api/notebook-types', notebookTypesRoutes);
+app.use('/api/notebook-issues', notebookIssuesRoutes);
+app.use('/api/notebook-reasons', notebookReasonsRoutes);
 scheduleMonthlyReportJob();
 
 const PORT = process.env.PORT || 6000;
