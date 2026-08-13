@@ -5,9 +5,9 @@ Multi-tenant SaaS (v4 LLD). School = top-level tenant, schoolId scoped on
 every collection. Backend in TypeScript (server/), built to scale long-term.
 
 ## Current Phase
-Backend core (Phases 1-8) complete. Extending with a new Notebook/Copy
-Register module (Student done — N1; NotebookType and NotebookIssue next).
-Frontend UI/UX design to come before any frontend code.
+Backend core (Phases 1-8) complete. Notebook/Copy Register module also
+complete: Student, NotebookType, NotebookIssue (with update/delete),
+NotebookReason, NotebookStock. Next: UI/UX mockups before any frontend code.
 
 ## Log
 
@@ -70,35 +70,63 @@ Frontend UI/UX design to come before any frontend code.
 
 - **Bulk-update, all master data + Student:** PUT /bulk added to Classes,
   Sections, Teachers, Departments, and Students — mirrors the existing
-  bulk-create pattern (array in, array of updated docs out). Route
-  ordering matters here: /bulk must be registered before /:id, or
-  Express matches "bulk" as if it were an :id param and fails casting to
-  ObjectId — hit and fixed this on Students first, then applied the
-  correct order to all four master-data resources up front.
+  bulk-create pattern. Route ordering matters: /bulk must be registered
+  before /:id, or Express matches "bulk" as if it were an :id param and
+  fails casting to ObjectId — hit and fixed this on Students first, then
+  applied the correct order everywhere else up front.
 
-- **Notebook/Copy Register module (new, same backend) — N1: Student:**
-  digitizes the handwritten register tracking which student took which
-  notebook type, how many, and why. Student model (schoolId, name,
-  classId, sectionId, optional veidaId) with a hard unique index on
-  schoolId+classId+sectionId+name — two same-named students are fine
-  across different sections, blocked within the same one. Full CRUD +
-  bulk-create + bulk-update built and tested, including the duplicate-key
-  behavior on create/update. Bulk-imported a real 27-student class list
-  (Class 1, Cherry section). Next: N2 (NotebookType catalog), N3
-  (NotebookIssue log + running totals per student).
+### Notebook/Copy Register module (new, same backend)
+
+Digitizes the handwritten register tracking which student took which
+notebook type, how many, and why — plus visibility into how much stock
+is actually left, which the register alone never provided.
+
+- **N1 — Student:** schoolId, name, classId, sectionId, optional veidaId.
+  Hard unique index on schoolId+classId+sectionId+name (same-named
+  students fine across sections, blocked within one). Full CRUD +
+  bulk-create + bulk-update. Bulk-imported a real 27-student class list
+  (Class 1, Cherry section).
+
+- **N2 — NotebookType:** dynamic catalog (e.g. A4 Long, A4 Brown Copy,
+  Small Nepali/Samajik), same pattern as Department. Full CRUD + bulk.
+
+- **N3 — NotebookIssue:** the actual log (studentId, notebookTypeId,
+  quantity, reason, classId/sectionId denormalized from the student for
+  fast filtering). Create, filterable list, per-student running-total
+  summary (aggregation + $lookup into NotebookType). Later extended with
+  update/delete for correcting mistaken entries — gated by the same
+  CREATE_NOTEBOOK_ISSUE permission, since whoever can log one should be
+  able to fix their own mistake.
+
+- **NotebookReason:** dynamic catalog (Lost, Damaged, Finished, New
+  Admission, etc.) to power a dropdown-plus-"Other" UX in the frontend.
+  NotebookIssue.reason itself stays a free-text string — the catalog is
+  additive, not a schema change.
+
+- **NotebookStock:** mirrors PaperStock for notebooks. Since there are
+  multiple notebook types (unlike paper's single running total), current
+  stock is computed per type: sum(NotebookStock.quantity) −
+  sum(NotebookIssue.quantity), grouped by notebookTypeId. Verified
+  end-to-end — added 1200 total stock for one type, issued some to a
+  student, confirmed currentStock dropped by exactly that amount.
+
+All five pieces gated by their own permission keys (MANAGE_STUDENTS,
+MANAGE_NOTEBOOK_TYPES, CREATE_/VIEW_NOTEBOOK_ISSUES,
+MANAGE_NOTEBOOK_REASONS, MANAGE_NOTEBOOK_STOCK), same scoping middleware
+as the rest of the backend.
 
 ## Next steps
-- N2: NotebookType catalog (dynamic, admin-managed — e.g. A4 Long, A4
-  Brown Copy, Small Nepali/Samajik).
-- N3: NotebookIssue log (student + type + quantity + free-text reason),
-  plus a running-total-per-student-per-type endpoint (same aggregation
-  pattern as the stock ledger).
 - UI/UX design pass (mockups) before any frontend code — Login, Print
-  Log, Dashboard, Master Data, and a "School Setup" bulk-onboarding
+  Log, Dashboard, Master Data, NotebookIssue form (cascading Class→
+  Section→Student dropdowns), and a "School Setup" bulk-onboarding
   screen (sequences class→section→teacher/student→department bulk calls
   behind one form).
+- Class/section-level notebook summary report (currently only
+  per-student totals exist).
 - Section-to-teacher assignment UI (deferred from Phase 3).
 - Possible project rename — domain bahilo.com secured (from Nepali
   "bahi" = register/notebook), decision pending.
-- Consider Swagger/OpenAPI docs once the API surface (including the new
-  module) is stable.
+- Consider Swagger/OpenAPI docs, and strict: 'throw' on models (currently
+  Mongoose silently strips unrecognized fields instead of erroring —
+  hit this once during NotebookReason testing, harmless but worth
+  tightening later).

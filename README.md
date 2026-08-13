@@ -1,23 +1,24 @@
 # A4 Paper Usage Tracker
 
-A multi-tenant SaaS application for tracking A4 paper usage across schools.
-Built as a real solution for the school I work at, architected so any
-school can be onboarded with zero code changes or redeployment.
+A multi-tenant SaaS application for tracking A4 paper usage — and now
+notebook/copy distribution — across schools. Built as a real solution
+for the school I work at, architected so any school can be onboarded
+with zero code changes or redeployment.
 
 ## Problem
 
 Schools print constantly with no visibility into how much paper is used,
-by whom, or why — stock runs out unexpectedly and usage trends stay invisible.
-Alongside this, notebook/copy distribution to students is still tracked
-by hand in a paper register, class by class.
+by whom, or why — stock runs out unexpectedly and usage trends stay
+invisible. Alongside this, notebook/copy distribution to students was
+tracked entirely by hand in a paper register, class by class, with no
+way to know how much stock was actually left.
 
 ## Features
 
 - **Multi-tenant architecture** — every school isolated via `schoolId`,
   enforced centrally through middleware; platform owner onboards a new
   school in one API call
-- **Auth & permissions** — JWT-based, permission-driven (not fixed roles):
-  e.g. Reception gets `CREATE_PRINTLOG` + `VIEW_PRINTLOGS` only
+- **Auth & permissions** — JWT-based, permission-driven (not fixed roles)
 - **Password recovery** — self-service change-password, plus OTP-based
   forgot-password/reset-password (6-digit email code, 10-minute expiry)
 - **User management** — school admins create staff, assign granular
@@ -26,23 +27,28 @@ by hand in a paper register, class by class.
   bulk-create, and bulk-update for all four
 - **Print tracking** — every job logged as teaching (class/section/teacher)
   or non-teaching (department), never both, never neither
-- **Stock ledger** — current stock computed automatically via aggregation:
-  sheets in − sheets used
+- **Paper stock ledger** — current stock via aggregation: sheets in −
+  sheets used
 - **Reports** — by-class, by-teacher, monthly trend, by-purpose breakdown
 - **CSV export** — print logs and stock entries
 - **Monthly auto-email** — each school's usage summary sent automatically
   to its own principal, via a scheduled job
-- **Student records** — lightweight per-school student list (name, class,
-  section, optional external ID), foundation for the notebook register
-  module *(in progress)*
-
-### In progress
-Notebook/Copy Register module — NotebookType catalog + NotebookIssue log
-with per-student running totals, digitizing the handwritten distribution
-register
+- **Notebook/Copy Register module** — digitizes the handwritten
+  distribution register:
+  - **Students** — lightweight per-school records (name, class, section,
+    optional external ID)
+  - **Notebook types** — dynamic, admin-managed catalog (A4 Long, Small
+    Nepali/Samajik, etc.)
+  - **Notebook issues** — who took what, how many, and why; full CRUD,
+    filterable, with per-student running totals
+  - **Reasons catalog** — dynamic dropdown-plus-"Other" source for issue
+    reasons
+  - **Notebook stock** — received vs. issued per type, mirrors the paper
+    stock ledger
 
 ### Planned
-Low-stock alerts · React + Recharts frontend · UI/UX mockups first
+Low-stock alerts · class/section-level notebook reports · React +
+Recharts frontend (UI/UX mockups first)
 
 ## Why Multi-Tenant
 
@@ -71,10 +77,12 @@ never reach another's data.
 | 7 — CSV Export | ✅ |
 | 8 — Monthly Email | ✅ |
 | Password reset (change + OTP forgot-password) | ✅ |
-| Notebook module — Student (N1) | ✅ |
-| Notebook module — NotebookType (N2) | ⏳ next |
-| Notebook module — NotebookIssue (N3) | ⏳ |
-| UI/UX mockups | 🚧 in progress |
+| Notebook module — Student | ✅ |
+| Notebook module — NotebookType | ✅ |
+| Notebook module — NotebookIssue (+ update/delete) | ✅ |
+| Notebook module — NotebookReason | ✅ |
+| Notebook module — NotebookStock | ✅ |
+| UI/UX mockups | 🚧 next |
 | Frontend (React + Recharts) | ⏳ after UI/UX |
 
 See `PROGRESS.md` for the detailed build log.
@@ -109,9 +117,8 @@ npm run dev
 
 ## Status
 
-Core backend (Phases 1-8) is complete: auth, multi-tenancy, permissions,
-master data, print tracking, stock ledger, reports, CSV export, monthly
-email, and password recovery — all bulk-create and bulk-update capable.
-Now extending into a Notebook/Copy Register module for student-level
-notebook tracking, and planning the frontend UI/UX before writing any
-client code.
+Backend is fully complete: the original 8-phase paper-tracking system
+plus a full Notebook/Copy Register module (students, notebook types,
+issue logging, reasons catalog, and stock tracking) — all bulk-capable
+where it makes sense, all tested end-to-end against real school data.
+Next: UI/UX mockups, then the React frontend.
