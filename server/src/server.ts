@@ -18,6 +18,7 @@ import studentsRoutes from './routes/students.routes';
 import notebookTypesRoutes from './routes/notebookTypes.routes';
 import notebookIssuesRoutes from './routes/notebookIssues.routes';
 import notebookReasonsRoutes from './routes/notebookReasons.routes';
+import notebookStockRoutes from './routes/notebookStock.routes';
 
 const app = express();
 app.use(express.json());
@@ -40,6 +41,7 @@ app.use('/api/students', studentsRoutes);
 app.use('/api/notebook-types', notebookTypesRoutes);
 app.use('/api/notebook-issues', notebookIssuesRoutes);
 app.use('/api/notebook-reasons', notebookReasonsRoutes);
+app.use('/api/notebook-stock', notebookStockRoutes);
 scheduleMonthlyReportJob();
 
 const PORT = process.env.PORT || 6000;

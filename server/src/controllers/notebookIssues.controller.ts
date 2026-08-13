@@ -153,3 +153,33 @@ export const getStudentSummary = async (req: Request, res: Response): Promise<vo
     res.status(500).json({ message: (err as Error).message });
   }
 };
+
+export const updateNotebookIssue = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const updated = await NotebookIssue.findOneAndUpdate(
+      { _id: req.params.id, schoolId: req.schoolId },
+      req.body,
+      { new: true }
+    );
+    if (!updated) {
+      res.status(404).json({ message: 'Notebook issue not found in your school' });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ message: (err as Error).message });
+  }
+};
+
+export const deleteNotebookIssue = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const deleted = await NotebookIssue.findOneAndDelete({ _id: req.params.id, schoolId: req.schoolId });
+    if (!deleted) {
+      res.status(404).json({ message: 'Notebook issue not found in your school' });
+      return;
+    }
+    res.json({ message: 'Notebook issue deleted' });
+  } catch (err) {
+    res.status(400).json({ message: (err as Error).message });
+  }
+};
