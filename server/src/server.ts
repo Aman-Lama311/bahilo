@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import cors from 'cors';
 import express from 'express';
 import connectDB from './config/db';
 import authRoutes from './routes/auth.routes';
@@ -22,6 +23,10 @@ import notebookStockRoutes from './routes/notebookStock.routes';
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true,
+}));
 
 connectDB();
 

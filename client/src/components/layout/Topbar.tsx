@@ -1,6 +1,18 @@
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, Search, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../app/hooks";
+import { logout } from "../../features/auth/authSlice";
+import { LogOut } from "lucide-react";
 
 export const Topbar = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   return (
     <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 sticky top-0 z-10">
       <div className="flex items-center gap-2 text-muted-foreground">
@@ -16,7 +28,14 @@ export const Topbar = () => {
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
             <User size={16} className="text-secondary-foreground" />
+            
           </div>
+          <button
+              onClick={handleLogout}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <LogOut size={18} />
+            </button>
         </div>
       </div>
     </header>
