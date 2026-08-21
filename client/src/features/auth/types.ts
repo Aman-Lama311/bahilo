@@ -1,6 +1,7 @@
-export interface JwtPayload {
-  userId: string;
+export interface AuthUser {
+  id: string;
   schoolId: string | null;
+  email: string;
   permissions: string[];
   isSuperAdmin: boolean;
   isPlatformOwner: boolean;
@@ -13,7 +14,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  user: AuthUser;
 }
 
 export interface ChangePasswordRequest {

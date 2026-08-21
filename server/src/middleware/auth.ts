@@ -2,14 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from '../types/jwt.types';
 
+const COOKIE_NAME = 'token';
+
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
-  const header = req.headers.authorization;
-  if (!header || !header.startsWith('Bearer ')) {
+  const token = req.cookies?.[COOKIE_NAME];
+  if (!token) {
     res.status(401).json({ message: 'No token provided' });
     return;
   }
 
-  const token = header.split(' ')[1];
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     res.status(500).json({ message: 'Server misconfigured: JWT_SECRET missing' });

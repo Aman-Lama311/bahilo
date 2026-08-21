@@ -7,6 +7,17 @@ import School from '../models/School';
 import { JwtPayload } from '../types/jwt.types';
 import { sendPasswordResetEmail } from '../services/email.service';
 
+const COOKIE_NAME = 'token';
+const COOKIE_MAX_AGE_MS = 8 * 60 * 60 * 1000; // 8h, matches JWT expiresIn below — keep these two in sync
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production', // must be true in prod (requires HTTPS); false so it still works on local http dev
+  sameSite: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as 'strict' | 'lax',
+  maxAge: COOKIE_MAX_AGE_MS,
+  path: '/',
+};
+
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, schoolCode, password } = req.body as {
     email: string;
@@ -56,10 +67,38 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign(payload, secret, { expiresIn: '8h' });
 
-    res.json({ token });
+    // Token now lives only in an httpOnly cookie — JS on the frontend can never read it,
+    // which is the whole point (mitigates XSS token theft vs localStorage).
+    res.cookie(COOKIE_NAME, token, cookieOptions);
+
+    // No token in the body anymore. Send back non-sensitive user info instead —
+    // the frontend needs this to populate authSlice (permissions, role flags, etc.)
+    // since it can no longer decode the token itself.
+    res.json({
+      user: {
+        id: String(user._id),
+        email: user.email,
+        schoolId: user.schoolId ? String(user.schoolId) : null,
+        permissions: user.permissions,
+        isSuperAdmin: user.isSuperAdmin,
+        isPlatformOwner: user.isPlatformOwner
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: (err as Error).message });
   }
+};
+
+export const logout = async (_req: Request, res: Response): Promise<void> => {
+  // clearCookie must be called with the SAME options (path/sameSite/secure) used to set it,
+  // otherwise the browser won't match and remove it.
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: cookieOptions.httpOnly,
+    secure: cookieOptions.secure,
+    sameSite: cookieOptions.sameSite,
+    path: cookieOptions.path,
+  });
+  res.json({ message: 'Logged out successfully' });
 };
 
 export const changePassword = async (req: Request, res: Response): Promise<void> => {

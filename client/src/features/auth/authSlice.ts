@@ -1,32 +1,27 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { jwtDecode } from 'jwt-decode';
-import type { JwtPayload } from './types';
+import type { AuthUser } from './types';
 
 interface AuthState {
-  token: string | null;
-  user: JwtPayload | null;
+  user: AuthUser | null;
 }
 
-const storedToken = localStorage.getItem('token');
+const storedUser = localStorage.getItem('authUser');
 
 const initialState: AuthState = {
-  token: storedToken,
-  user: storedToken ? jwtDecode<JwtPayload>(storedToken) : null
+  user: storedUser ? JSON.parse(storedUser) : null
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<{ token: string }>) => {
-      state.token = action.payload.token;
-      state.user = jwtDecode<JwtPayload>(action.payload.token);
-      localStorage.setItem('token', action.payload.token);
+    setCredentials: (state, action: PayloadAction<{ user: AuthUser }>) => {
+      state.user = action.payload.user;
+      localStorage.setItem('authUser', JSON.stringify(action.payload.user));
     },
     logout: (state) => {
-      state.token = null;
       state.user = null;
-      localStorage.removeItem('token');
+      localStorage.removeItem('authUser');
     }
   }
 });

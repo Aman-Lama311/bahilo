@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "./hooks";
 
-export const ProtectedRoute = () => {
+export const PublicRoute = () => {
   const user = useAppSelector((state) => state.auth.user);
-  return user ? <Outlet /> : <Navigate to="/login" replace />;
+  return user ? <Navigate to="/dashboard" replace /> : <Outlet />;
 };
